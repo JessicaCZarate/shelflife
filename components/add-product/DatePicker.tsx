@@ -11,9 +11,8 @@ import { Fonts } from "@/constants/Fonts";
 
 type Props = {
   label: string;
+  setExpirationDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
 };
-
-type DateModeType = "date" | "time" | "datetime" | "countdown";
 
 export default function DatePicker(props: Props) {
   const [date, setDate] = useState<Date | undefined>();
@@ -28,6 +27,7 @@ export default function DatePicker(props: Props) {
     if (event.type === "set" && selectedDate) {
       console.log(selectedDate);
       setDate(selectedDate);
+      props.setExpirationDate(selectedDate);
     }
 
     setShow(false);
@@ -58,9 +58,7 @@ export default function DatePicker(props: Props) {
         paddingBottom: 6,
       }}
     >
-      <Text
-        style={{ fontFamily: "Poppins-SemiBold", fontSize: Fonts.labelSize }}
-      >
+      <Text style={{ fontFamily: "Poppins-SemiBold", fontSize: Fonts.labelSize }}>
         {props.label}
       </Text>
       <Pressable style={{ marginTop: 6 }} onPress={showDatePicker}>
@@ -69,12 +67,7 @@ export default function DatePicker(props: Props) {
         </Text>
       </Pressable>
       {show && (
-        <DateTimePicker
-          value={new Date()}
-          mode="date"
-          display="default"
-          onChange={onChange}
-        />
+        <DateTimePicker value={new Date()} mode="date" display="default" onChange={onChange} />
       )}
     </View>
   );

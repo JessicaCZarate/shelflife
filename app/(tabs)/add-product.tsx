@@ -1,98 +1,104 @@
-import { useState } from "react";
-import {
-  Alert,
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { useCameraPermissions } from "expo-camera";
+import * as FileSystem from "expo-file-system";
+import { decode } from "base64-arraybuffer";
 
-import {
-  CameraView,
-  CameraType,
-  useCameraPermissions,
-  BarcodeScanningResult,
-} from "expo-camera";
-
-import { Colors } from "@/constants/Colors";
 import PrimaryButton from "@/components/PrimaryButton";
 import TextField from "@/components/add-product/TextField";
 import SelectField from "@/components/add-product/SelectField";
 import UploadImage from "@/components/add-product/UploadImage";
 import ScanBarcodeIconButton from "@/components/add-product/ScanBarcodeIconButton";
 import DatePicker from "@/components/add-product/DatePicker";
+import BarcodeScanner from "@/components/add-product/BarcodeScanner";
+import { supabase } from "@/utils/supabase";
+import { ImagePickerAsset } from "expo-image-picker";
+import { validateProductData } from "@/utils/productDataValidation";
+
+type ProductTypes = {
+  name: string;
+  barcode: string;
+  category: string;
+  expiration_date: Date;
+  quantity: string;
+  image_url: string;
+  notes: string;
+};
 
 export default function AddProduct() {
-  const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
+
+  const [productData, setProductData] = useState<ProductTypes>();
 
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const [barcode, setBarcode] = useState<string | undefined>();
-  const [quantity, setQuantity] = useState<string | undefined>();
+  const [productName, setProductName] = useState<string | undefined>();
+  const [quantity, setQuantity] = useState<string | undefined>("1");
   const [note, setNote] = useState<string | undefined>();
-  const [selectedValue, setSelectedValue] = useState<string | undefined>();
+  const [selectedValue, setSelectedValue] = useState<string | undefined>("canned");
+  const [expirationDate, setExpirationDate] = useState<Date | undefined>();
+  const [imageUri, setImageUri] = useState<ImagePickerAsset | undefined>();
 
-  if (!permission) {
-    // Camera permissions are still loading.
-    return <View />;
+  function launchBarcodeScanner() {
+    requestPermission();
+    setIsCameraVisible(true);
   }
 
-  if (!permission.granted) {
-    // Camera permissions are not granted yet.
-    return (
-      <View style={styles.container}>
-        <Text style={styles.message}>
-          We need your permission to show the camera
-        </Text>
-        <PrimaryButton
-          onPress={requestPermission}
-          title="Grant Permission"
-          variant="solid"
-        />
-      </View>
-    );
+  async function onCreateHanlder() {
+    const productData = {
+      name: productName,
+      barcode: barcode,
+      category: selectedValue,
+      expiration_date: expirationDate,
+      quantity: quantity,
+      image_url: "",
+      notes: note,
+    };
+
+    const errors = validateProductData(productData);
+
+    if (!errors.length) return Alert.alert("Invalid data", "Please put valid data");
+
+    if (imageUri?.base64) {
+      try {
+        const base64 = imageUri.base64;
+        const filename = `public/${imageUri.fileName}`;
+
+        const { data, error } = await supabase.storage
+          .from("product_images")
+          .upload(filename, decode(base64), { contentType: imageUri.mimeType });
+
+        if (error) throw new Error(error.message);
+
+        const { data: imageData } = supabase.storage.from("product_images").getPublicUrl(data.path);
+
+        productData.image_url = imageData.publicUrl;
+        alert("saved");
+      } catch (error) {
+        console.log("error:", error);
+      }
+    }
+
+    const { data, error } = await supabase.from("products").insert([productData]).select();
+
+    if (error) return Alert.alert("Something went wrong", error.message);
+
+    console.log(data);
   }
 
-  function toggleCameraFacing() {
-    setFacing((current) => (current === "back" ? "front" : "back"));
-  }
-
-  function onBarcodeScannedHandler(result: BarcodeScanningResult) {
-    setBarcode(result.raw);
-    setIsCameraVisible(false);
-    Alert.alert("Success", "You have successfull scanned the product");
-  }
+  useEffect(() => {
+    console.log(productData);
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
       {!isCameraVisible && (
-        <ScanBarcodeIconButton
-          color="black"
-          label="Scan"
-          onPress={() => setIsCameraVisible(true)}
-        />
+        <ScanBarcodeIconButton color="black" label="Scan" onPress={launchBarcodeScanner} />
       )}
-      <View
-        style={{
-          overflow: "hidden",
-          borderRadius: 20,
-          marginBottom: 20,
-        }}
-      >
-        {isCameraVisible && (
-          <CameraView
-            style={styles.camera}
-            facing={facing}
-            onBarcodeScanned={onBarcodeScannedHandler}
-            mirror
-          >
-            <View style={styles.buttonContainer}></View>
-          </CameraView>
-        )}
-      </View>
-      <UploadImage />
+      {permission && isCameraVisible && (
+        <BarcodeScanner setBarcode={setBarcode} setIsCameraVisible={setIsCameraVisible} />
+      )}
+      <UploadImage setImageUri={setImageUri} />
 
       <View style={{ gap: 20, marginBottom: 40 }}>
         <TextField
@@ -100,28 +106,31 @@ export default function AddProduct() {
           label="Product Barcode"
           onChangeText={setBarcode}
           placeholder="Barcode Number"
+          type="number-pad"
+        />
+        <TextField
+          value={productName}
+          label="Product Name"
+          onChangeText={setProductName}
+          placeholder="Enter product name"
         />
         <SelectField
           label="Categories"
           selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
         />
-        <DatePicker label="Expiration Date:" />
+        <DatePicker setExpirationDate={setExpirationDate} label="Expiration Date:" />
         <TextField
           value={quantity}
           label="Quanity"
           onChangeText={setQuantity}
           placeholder="Input number of items"
+          type="number-pad"
         />
-        <TextField
-          value={note}
-          label="Note"
-          onChangeText={setNote}
-          placeholder="Add description"
-        />
+        <TextField value={note} label="Note" onChangeText={setNote} placeholder="Add description" />
       </View>
 
-      <PrimaryButton title="Create" variant="solid" onPress={() => {}} />
+      <PrimaryButton title="Create" variant="solid" onPress={onCreateHanlder} />
 
       <View style={{ paddingBottom: 20 }}></View>
     </ScrollView>

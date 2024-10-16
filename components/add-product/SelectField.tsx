@@ -16,10 +16,10 @@ type PickerItem = {
 };
 
 const foodCategories: PickerItem[] = [
+  { label: "Canned", value: "canned" },
   { label: "Meat", value: "meat" },
   { label: "Vegetables", value: "vegetables" },
   { label: "Fruits", value: "fruits" },
-  { label: "Canned", value: "canned" },
   { label: "Grains", value: "grains" },
   { label: "Oils", value: "oils" },
   { label: "Condiments", value: "condiments" },
@@ -33,9 +33,7 @@ const foodCategories: PickerItem[] = [
 export default function SelectField(props: SelectFieldProps) {
   return (
     <View>
-      <Text
-        style={{ fontFamily: "Poppins-SemiBold", fontSize: Fonts.labelSize }}
-      >
+      <Text style={{ fontFamily: "Poppins-SemiBold", fontSize: Fonts.labelSize }}>
         {props.label}:
       </Text>
       <View
@@ -48,9 +46,7 @@ export default function SelectField(props: SelectFieldProps) {
         <Picker
           selectedValue={props.selectedValue}
           mode="dialog"
-          onValueChange={(itemValue, itemIndex) =>
-            props.setSelectedValue(itemValue)
-          }
+          onValueChange={(itemValue, itemIndex) => props.setSelectedValue(itemValue)}
         >
           {foodCategories.map(({ label, value }, index) => (
             <Picker.Item key={label + index} label={label} value={value} />
