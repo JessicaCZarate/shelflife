@@ -25,7 +25,6 @@ export default function DatePicker(props: Props) {
     }
 
     if (event.type === "set" && selectedDate) {
-      console.log(selectedDate);
       setDate(selectedDate);
       props.setExpirationDate(selectedDate);
     }

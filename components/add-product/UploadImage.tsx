@@ -26,8 +26,6 @@ export default function UploadImage(props: UploadImageProps) {
       base64: true,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
       props.setImageUri(result.assets[0]);
@@ -48,7 +46,6 @@ export default function UploadImage(props: UploadImageProps) {
       base64: true,
     });
 
-    console.log(result);
     if (!result.canceled) {
       setImage(result.assets[0].uri);
       props.setImageUri(result.assets[0]);

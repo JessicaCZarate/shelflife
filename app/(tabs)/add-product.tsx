@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, View } from "react-native";
 import { useCameraPermissions } from "expo-camera";
 import { decode } from "base64-arraybuffer";
 
@@ -14,20 +14,8 @@ import { supabase } from "@/utils/supabase";
 import { ImagePickerAsset } from "expo-image-picker";
 import { validateProductData } from "@/utils/productDataValidation";
 
-type ProductTypes = {
-  name: string;
-  barcode: string;
-  category: string;
-  expiration_date: Date;
-  quantity: string;
-  image_url: string;
-  notes: string;
-};
-
 export default function AddProduct() {
   const [permission, requestPermission] = useCameraPermissions();
-
-  const [productData, setProductData] = useState<ProductTypes>();
 
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const [barcode, setBarcode] = useState<string | undefined>();
@@ -37,6 +25,17 @@ export default function AddProduct() {
   const [selectedValue, setSelectedValue] = useState<string | undefined>("canned");
   const [expirationDate, setExpirationDate] = useState<Date | undefined>();
   const [imageUri, setImageUri] = useState<ImagePickerAsset | undefined>();
+  const [loading, setLoading] = useState(false);
+
+  function resetData() {
+    setBarcode(undefined);
+    setProductName(undefined);
+    setQuantity("1");
+    setNote(undefined);
+    setSelectedValue("canned");
+    setExpirationDate(undefined);
+    setImageUri(undefined);
+  }
 
   function launchBarcodeScanner() {
     requestPermission();
@@ -44,17 +43,18 @@ export default function AddProduct() {
   }
 
   async function onCreateHanlder() {
+    setLoading(true);
+
     const productData = {
       name: productName,
       barcode: barcode,
       category: selectedValue,
       expiration_date: expirationDate,
       quantity: quantity,
-      image_url: "",
+      image_url:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXxZR0_1ISIJx_T4oB5-5OJVSNgSMFLe8eCw&s",
       notes: note,
     };
-
-    console.log(barcode);
 
     const errors = validateProductData(productData);
 
@@ -74,7 +74,8 @@ export default function AddProduct() {
         const { data: imageData } = supabase.storage.from("product_images").getPublicUrl(data.path);
 
         productData.image_url = imageData.publicUrl;
-        alert("saved");
+        Alert.alert("You have successfully add a product", `${productData.name} has been added`);
+        resetData();
       } catch (error) {
         console.log("error:", error);
       }
@@ -84,12 +85,8 @@ export default function AddProduct() {
 
     if (error) return Alert.alert("Something went wrong", error.message);
 
-    console.log(data);
+    setLoading(false);
   }
-
-  useEffect(() => {
-    console.log(productData);
-  }, []);
 
   return (
     <ScrollView style={styles.container}>
@@ -131,7 +128,11 @@ export default function AddProduct() {
         <TextField value={note} label="Note" onChangeText={setNote} placeholder="Add description" />
       </View>
 
-      <PrimaryButton title="Create" variant="solid" onPress={onCreateHanlder} />
+      {loading ? (
+        <ActivityIndicator color="black" size="large" />
+      ) : (
+        <PrimaryButton title="Create" variant="solid" onPress={onCreateHanlder} />
+      )}
 
       <View style={{ paddingBottom: 20 }}></View>
     </ScrollView>

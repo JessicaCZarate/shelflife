@@ -7,6 +7,7 @@ type ButtonProps = {
   paddingBlock?: number;
   paddingInline?: number;
   fontSize?: number;
+  loading?: boolean;
 };
 
 export default function PrimaryButton(props: ButtonProps) {

@@ -39,8 +39,6 @@ export default function Food() {
 
     if (error) return Alert.alert("Something went wrong", "Can't get products");
 
-    console.log(products);
-
     setProducts(products);
     setTotalProducts(count);
     setIsLoading(false);
@@ -82,7 +80,7 @@ export default function Food() {
       <FlatList
         data={products}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 20, backgroundColor: "transparent" }}
+        contentContainerStyle={{ gap: 20, backgroundColor: "transparent", paddingBottom: 40 }}
         style={{ paddingBottom: 20, marginTop: 16 }}
         renderItem={({ item }) => {
           const daysLeft = daysLeftUntilExpiration(item.expiration_date);
