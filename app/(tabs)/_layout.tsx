@@ -56,6 +56,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="food"
         options={{
+          headerTitle: "ShelfLife",
+          headerTitleStyle: { fontFamily: "Poppins-SemiBold", fontSize: 24 },
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="food-takeout-box"

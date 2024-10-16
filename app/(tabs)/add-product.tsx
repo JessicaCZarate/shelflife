@@ -46,7 +46,11 @@ export default function AddProduct() {
         <Text style={styles.message}>
           We need your permission to show the camera
         </Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <PrimaryButton
+          onPress={requestPermission}
+          title="Grant Permission"
+          variant="solid"
+        />
       </View>
     );
   }
@@ -64,7 +68,11 @@ export default function AddProduct() {
   return (
     <ScrollView style={styles.container}>
       {!isCameraVisible && (
-        <ScanBarcodeIconButton onPress={() => setIsCameraVisible(true)} />
+        <ScanBarcodeIconButton
+          color="black"
+          label="Scan"
+          onPress={() => setIsCameraVisible(true)}
+        />
       )}
       <View
         style={{
@@ -129,6 +137,7 @@ const styles = StyleSheet.create({
   message: {
     textAlign: "center",
     paddingBottom: 10,
+    fontFamily: "Poppins-SemiBold",
   },
   camera: {
     width: "100%",

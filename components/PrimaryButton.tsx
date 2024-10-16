@@ -1,40 +1,68 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 
 type ButtonProps = {
   title: string;
   onPress: () => void;
   variant: "solid" | "outline";
+  paddingBlock?: number;
+  paddingInline?: number;
+  fontSize?: number;
 };
 
 export default function PrimaryButton(props: ButtonProps) {
+  let customStyle = {
+    paddingVertical: props.paddingBlock ?? 10,
+    paddingHorizontal: props.paddingInline ?? 15,
+  };
+
   switch (props.variant) {
     case "solid":
       return (
-        <Pressable style={[styles.base, styles.solid]} onPress={props.onPress}>
-          <Text style={[styles.baseTextStyle, styles.solidTextStyle]}>
+        <Pressable
+          style={[styles.base, styles.solid, customStyle]}
+          onPress={props.onPress}
+        >
+          <Text
+            style={[
+              styles.baseTextStyle,
+              styles.solidTextStyle,
+              { fontSize: props.fontSize ?? 16 },
+            ]}
+          >
             {props.title}
           </Text>
         </Pressable>
       );
     case "outline":
       return (
-        <Pressable
-          style={[styles.base, styles.outline]}
+        <TouchableOpacity
+          style={[styles.base, styles.outline, customStyle]}
           onPress={props.onPress}
         >
-          <Text style={[styles.baseTextStyle, styles.outlineTextStyle]}>
+          <Text
+            style={[
+              styles.baseTextStyle,
+              styles.outlineTextStyle,
+              { fontSize: props.fontSize ?? 16 },
+            ]}
+          >
             {props.title}
           </Text>
-        </Pressable>
+        </TouchableOpacity>
       );
   }
 }
 
 const styles = StyleSheet.create({
   base: {
-    minWidth: 200,
     borderRadius: 10,
-    paddingVertical: 10,
+    justifyContent: "center",
   },
   baseTextStyle: { textAlign: "center", fontFamily: "Poppins-SemiBold" },
 
