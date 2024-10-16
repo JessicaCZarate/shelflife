@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, Pressable, TouchableOpacity } from "react-native";
 
 type ButtonProps = {
   title: string;
@@ -24,10 +18,7 @@ export default function PrimaryButton(props: ButtonProps) {
   switch (props.variant) {
     case "solid":
       return (
-        <Pressable
-          style={[styles.base, styles.solid, customStyle]}
-          onPress={props.onPress}
-        >
+        <TouchableOpacity style={[styles.base, styles.solid, customStyle]} onPress={props.onPress}>
           <Text
             style={[
               styles.baseTextStyle,
@@ -37,7 +28,7 @@ export default function PrimaryButton(props: ButtonProps) {
           >
             {props.title}
           </Text>
-        </Pressable>
+        </TouchableOpacity>
       );
     case "outline":
       return (

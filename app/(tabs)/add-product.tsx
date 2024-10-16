@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { useCameraPermissions } from "expo-camera";
-import * as FileSystem from "expo-file-system";
 import { decode } from "base64-arraybuffer";
 
 import PrimaryButton from "@/components/PrimaryButton";
@@ -55,9 +54,11 @@ export default function AddProduct() {
       notes: note,
     };
 
+    console.log(barcode);
+
     const errors = validateProductData(productData);
 
-    if (!errors.length) return Alert.alert("Invalid data", "Please put valid data");
+    if (errors.length !== 0) return Alert.alert("Invalid data", "Please put valid data");
 
     if (imageUri?.base64) {
       try {

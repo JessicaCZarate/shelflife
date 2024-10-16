@@ -3,14 +3,26 @@ import ScanBarcodeIconButton from "../add-product/ScanBarcodeIconButton";
 import PrimaryButton from "../PrimaryButton";
 import { Colors } from "@/constants/Colors";
 
-export default function FoodSearchBar() {
+type Props = {
+  setSearchText: React.Dispatch<React.SetStateAction<string>>;
+  searchValue: string;
+  onPress: () => void;
+  onScan: () => void;
+};
+
+export default function FoodSearchBar(props: Props) {
   return (
     <View style={styles.outerSearchBarWrapper}>
       <View style={styles.innerSearchBarWrapper}>
-        <TextInput style={{ flex: 1 }} placeholder="Search" />
-        <ScanBarcodeIconButton color={Colors.mediumGray} onPress={() => {}} />
+        <TextInput
+          value={props.searchValue}
+          style={{ flex: 1 }}
+          placeholder="Search"
+          onChangeText={props.setSearchText}
+        />
+        <ScanBarcodeIconButton color={Colors.mediumGray} onPress={props.onScan} />
       </View>
-      <PrimaryButton title="Search" variant="solid" onPress={() => {}} />
+      <PrimaryButton title="Search" variant="solid" onPress={props.onPress} />
     </View>
   );
 }
