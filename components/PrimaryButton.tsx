@@ -1,3 +1,4 @@
+import { forwardRef, LegacyRef } from "react";
 import { StyleSheet, Text, View, Pressable, TouchableOpacity } from "react-native";
 
 type ButtonProps = {
@@ -10,7 +11,10 @@ type ButtonProps = {
   loading?: boolean;
 };
 
-export default function PrimaryButton(props: ButtonProps) {
+export default forwardRef(function PrimaryButton(
+  props: ButtonProps,
+  ref: LegacyRef<TouchableOpacity> | undefined
+) {
   let customStyle = {
     paddingVertical: props.paddingBlock ?? 10,
     paddingHorizontal: props.paddingInline ?? 15,
@@ -34,6 +38,7 @@ export default function PrimaryButton(props: ButtonProps) {
     case "outline":
       return (
         <TouchableOpacity
+          ref={ref}
           style={[styles.base, styles.outline, customStyle]}
           onPress={props.onPress}
         >
@@ -49,7 +54,7 @@ export default function PrimaryButton(props: ButtonProps) {
         </TouchableOpacity>
       );
   }
-}
+});
 
 const styles = StyleSheet.create({
   base: {

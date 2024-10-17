@@ -34,6 +34,10 @@ export default function RootLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="product"
+        options={{ contentStyle: { backgroundColor: "white" }, title: "Product Profile" }}
+      />
     </Stack>
   );
 }

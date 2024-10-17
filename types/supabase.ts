@@ -45,6 +45,7 @@ export type Database = {
           name: string | null
           notes: string | null
           quantity: number | null
+          status: string | null
         }
         Insert: {
           barcode?: string | null
@@ -56,6 +57,7 @@ export type Database = {
           name?: string | null
           notes?: string | null
           quantity?: number | null
+          status?: string | null
         }
         Update: {
           barcode?: string | null
@@ -67,6 +69,7 @@ export type Database = {
           name?: string | null
           notes?: string | null
           quantity?: number | null
+          status?: string | null
         }
         Relationships: []
       }

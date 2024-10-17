@@ -5,7 +5,8 @@ import { Database } from "@/types/supabase";
 import { daysLeftUntilExpiration } from "@/utils/DateFormatter";
 import { supabase } from "@/utils/supabase";
 import { useCameraPermissions } from "expo-camera";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, Text, Alert, FlatList, ActivityIndicator } from "react-native";
 
 const imageUri = [
@@ -27,6 +28,8 @@ export default function Food() {
 
   async function searchProduct() {
     setIsLoading(true);
+    const today = new Date().toISOString().split("T")[0];
+
     let {
       data: products,
       error,
@@ -35,6 +38,7 @@ export default function Food() {
       .from("products")
       .select("*", { count: "exact" })
       .or(`name.ilike.%${searchText}%,barcode.ilike.%${searchText}%`)
+      .gte("expiration_date", today)
       .returns<ProductTypes[]>();
 
     if (error) return Alert.alert("Something went wrong", "Can't get products");
@@ -43,6 +47,12 @@ export default function Food() {
     setTotalProducts(count);
     setIsLoading(false);
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      searchProduct();
+    }, [])
+  );
 
   useEffect(() => {
     searchProduct();
@@ -87,17 +97,16 @@ export default function Food() {
           const color = daysLeft >= 8 ? "green" : daysLeft >= 5 ? "orange" : "red";
 
           return (
-            <>
-              <ProductItemCard
-                key={item.id}
-                imageUrl={item.image_url}
-                name={item.name}
-                quantity={item.quantity}
-                barcode={item.barcode}
-                lifeSpanColor={color}
-                lifeSpanLeft={`${daysLeft} days left`}
-              />
-            </>
+            <ProductItemCard
+              key={item.id}
+              id={item.id}
+              imageUrl={item.image_url}
+              name={item.name}
+              quantity={item.quantity}
+              barcode={item.barcode}
+              lifeSpanColor={color}
+              lifeSpanLeft={`${daysLeft} days left`}
+            />
           );
         }}
       />

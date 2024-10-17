@@ -11,7 +11,8 @@ import { Fonts } from "@/constants/Fonts";
 
 type Props = {
   label: string;
-  setExpirationDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  setExpirationDate: React.Dispatch<React.SetStateAction<string | undefined>>;
+  defaultValue?: string;
 };
 
 export default function DatePicker(props: Props) {
@@ -26,7 +27,7 @@ export default function DatePicker(props: Props) {
 
     if (event.type === "set" && selectedDate) {
       setDate(selectedDate);
-      props.setExpirationDate(selectedDate);
+      props.setExpirationDate(formatDate(selectedDate.toISOString()));
     }
 
     setShow(false);
@@ -62,7 +63,11 @@ export default function DatePicker(props: Props) {
       </Text>
       <Pressable style={{ marginTop: 6 }} onPress={showDatePicker}>
         <Text style={{ fontFamily: "Poppins", fontSize: 14 }}>
-          {!date ? "--/--/---" : formatDate(date.toISOString())}
+          {props.defaultValue
+            ? props.defaultValue
+            : !date
+            ? "****/**/**"
+            : formatDate(date.toISOString())}
         </Text>
       </Pressable>
       {show && (

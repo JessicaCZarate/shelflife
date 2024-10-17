@@ -23,7 +23,7 @@ export default function AddProduct() {
   const [quantity, setQuantity] = useState<string | undefined>("1");
   const [note, setNote] = useState<string | undefined>();
   const [selectedValue, setSelectedValue] = useState<string | undefined>("canned");
-  const [expirationDate, setExpirationDate] = useState<Date | undefined>();
+  const [expirationDate, setExpirationDate] = useState<string | undefined>();
   const [imageUri, setImageUri] = useState<ImagePickerAsset | undefined>();
   const [loading, setLoading] = useState(false);
 

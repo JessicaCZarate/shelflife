@@ -6,6 +6,31 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+function HeaderLeft() {
+  return (
+    <View style={{ flexDirection: "column", gap: -50, marginLeft: 10 }}>
+      <Text
+        style={{
+          fontFamily: "Poppins-Bold",
+          fontSize: 24,
+        }}
+      >
+        ShelfLife
+      </Text>
+      <Text
+        style={{
+          fontFamily: "Poppins-SemiBold",
+          fontSize: 14,
+          marginTop: -10,
+          marginLeft: 20,
+        }}
+      >
+        Food Waste Tracker
+      </Text>
+    </View>
+  );
+}
+
 export default function TabLayout() {
   return (
     <Tabs
@@ -20,36 +45,11 @@ export default function TabLayout() {
         name="index"
         options={{
           headerTitleStyle: { display: "none" },
-          headerLeft: () => (
-            <View style={{ flexDirection: "column", gap: -50, marginLeft: 10 }}>
-              <Text
-                style={{
-                  fontFamily: "Poppins-Bold",
-                  fontSize: 24,
-                }}
-              >
-                ShelfLife
-              </Text>
-              <Text
-                style={{
-                  fontFamily: "Poppins-SemiBold",
-                  fontSize: 14,
-                  marginTop: -10,
-                  marginLeft: 20,
-                }}
-              >
-                Food Waste Tracker
-              </Text>
-            </View>
-          ),
+          headerLeft: () => <HeaderLeft />,
           headerRight: () => (
-            <Text style={{ fontFamily: "Poppins-SemiBold", marginRight: 20 }}>
-              DASHBOARD
-            </Text>
+            <Text style={{ fontFamily: "Poppins-SemiBold", marginRight: 20 }}>DASHBOARD</Text>
           ),
-          tabBarIcon: ({ color }) => (
-            <Foundation size={28} name="home" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Foundation size={28} name="home" color={color} />,
         }}
       />
 
@@ -59,11 +59,7 @@ export default function TabLayout() {
           headerTitle: "ShelfLife",
           headerTitleStyle: { fontFamily: "Poppins-SemiBold", fontSize: 24 },
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="food-takeout-box"
-              size={24}
-              color={color}
-            />
+            <MaterialCommunityIcons name="food-takeout-box" size={24} color={color} />
           ),
         }}
       />
@@ -71,9 +67,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="add-product"
         options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="add-circle" size={24} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Ionicons name="add-circle" size={24} color={color} />,
           title: "",
           headerStyle: { height: 50 },
         }}
@@ -82,18 +76,12 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person-circle" size={24} color={color} />
+          headerTitleStyle: { display: "none" },
+          headerLeft: () => <HeaderLeft />,
+          headerRight: () => (
+            <Text style={{ fontFamily: "Poppins-SemiBold", marginRight: 20 }}>ACCOUNT</Text>
           ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="analytics"
-        options={{
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="analytics" size={24} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Ionicons name="person-circle" size={24} color={color} />,
         }}
       />
     </Tabs>

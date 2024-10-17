@@ -2,8 +2,10 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import PrimaryButton from "../PrimaryButton";
 import { FontDisplay } from "expo-font";
+import { Link, useNavigation } from "expo-router";
 
 type ProductItemCardProps = {
+  id: number;
   name: string | null;
   lifeSpanLeft: string | null;
   lifeSpanColor: string;
@@ -34,13 +36,15 @@ export default function ProductItemCard(props: ProductItemCardProps) {
         </Text>
       </View>
       <View style={{ marginLeft: "auto", alignSelf: "center" }}>
-        <PrimaryButton
-          fontSize={12}
-          title="View"
-          variant="outline"
-          paddingBlock={5}
-          onPress={() => {}}
-        />
+        <Link href={{ pathname: "/product", params: { productId: props.id } }} asChild>
+          <PrimaryButton
+            fontSize={12}
+            title="View"
+            variant="outline"
+            paddingBlock={5}
+            onPress={() => {}}
+          />
+        </Link>
       </View>
     </View>
   );

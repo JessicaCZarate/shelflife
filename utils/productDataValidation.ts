@@ -2,14 +2,12 @@ type ProductTypes = {
   name: string | undefined;
   barcode: string | undefined;
   category: string | undefined;
-  expiration_date: Date | undefined;
+  expiration_date: Date | string | undefined;
   quantity: string | undefined; // Changed from number to string
-  image_url: string | undefined;
-  notes: string | undefined;
 };
 
 export function validateProductData(productData: ProductTypes): string[] {
-  const { name, barcode, category, expiration_date, quantity, image_url, notes } = productData;
+  const { name, barcode, category, expiration_date, quantity } = productData;
   const messages: string[] = [];
 
   // Helper function to check for null, undefined, or empty string
@@ -27,12 +25,6 @@ export function validateProductData(productData: ProductTypes): string[] {
   }
   if (isInvalid(expiration_date)) {
     messages.push("Expiration date is required.");
-  }
-  if (isInvalid(image_url)) {
-    messages.push("Image URL is required.");
-  }
-  if (isInvalid(notes)) {
-    messages.push("Notes are required.");
   }
 
   // Convert quantity to a number and check that it's a whole number greater than zero
